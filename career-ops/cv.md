@@ -6,7 +6,7 @@
 
 ## Professional Summary
 
-Senior QA and Test Automation Engineer with 9+ years of experience across automotive telematics, embedded systems, enterprise POS, and REST API domains. Proven track record of building Python-Selenium and CAPL automation frameworks from scratch, achieving 30–40% efficiency gains, and integrating CI/CD pipelines for continuous regression coverage. Experienced leading QA strategy and collaborating with multinational teams across Singapore, Japan, China, Germany, India, and the Philippines.
+Senior QA and Test Automation Engineer with 10+ years of experience across automotive telematics, embedded systems, enterprise POS, and REST API domains. Proven track record of building Python-Selenium and CAPL automation frameworks from scratch, achieving 30–40% efficiency gains, and integrating CI/CD pipelines for continuous regression coverage. Experienced leading QA strategy and collaborating with multinational teams across Singapore, Japan, China, Germany, India, and the Philippines.
 
 ---
 
