@@ -1,6 +1,6 @@
 # Alain Rex Banilad
 
-+65 9899 1837 | alain.banilad@gmail.com | linkedin.com/in/alain-rex-banilad-89a863176 | github.com/alainbanilad | Singapore
++65 9899 1837 | +63 956 712 1261 | alain.banilad@gmail.com | linkedin.com/in/alain-rex-banilad-89a863176 | github.com/alainbanilad | Singapore
 
 ---
 

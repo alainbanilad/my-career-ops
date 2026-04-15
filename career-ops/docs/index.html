@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Career Dashboard — Alain</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 0 0 40px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border-bottom: 1px solid #1e293b;
+      padding: 20px 16px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .header h1 { font-size: 1.25rem; font-weight: 700; color: #f1f5f9; }
+    .header .subtitle { font-size: 0.75rem; color: #64748b; margin-top: 2px; }
+
+    .section { padding: 20px 16px 0; }
+    .section-title {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #64748b;
+      margin-bottom: 12px;
+    }
+
+    /* Stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .stat-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 12px 8px;
+      text-align: center;
+    }
+
+    .stat-value { font-size: 1.5rem; font-weight: 700; line-height: 1; }
+    .stat-label { font-size: 0.65rem; color: #94a3b8; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* Filter */
+    .filter-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .filter-btn {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 20px;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 0.7rem;
+      padding: 4px 10px;
+      transition: all 0.15s;
+    }
+
+    .filter-btn.active {
+      background: #3b82f6;
+      border-color: #3b82f6;
+      color: #fff;
+    }
+
+    /* Table */
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 10px;
+      border: 1px solid #1e293b;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+
+    thead th {
+      background: #1e293b;
+      color: #64748b;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      padding: 10px 12px;
+      text-align: left;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-top: 1px solid #1e293b;
+      transition: background 0.1s;
+    }
+
+    tbody tr:hover { background: #1e293b; }
+    tbody tr.hidden { display: none; }
+
+    td {
+      padding: 10px 12px;
+      vertical-align: top;
+    }
+
+    td.num { color: #64748b; font-size: 0.7rem; white-space: nowrap; }
+    td.date { color: #64748b; font-size: 0.7rem; white-space: nowrap; }
+    td.company { white-space: nowrap; }
+    td.role { color: #cbd5e1; max-width: 200px; }
+    td.score { white-space: nowrap; font-weight: 600; font-size: 0.75rem; }
+    td.notes { color: #94a3b8; font-size: 0.7rem; max-width: 260px; line-height: 1.4; }
+
+    .score-bar {
+      height: 3px;
+      background: #1e293b;
+      border-radius: 2px;
+      margin-top: 3px;
+      width: 48px;
+    }
+    .score-fill { height: 100%; border-radius: 2px; }
+
+    .badge {
+      border-radius: 4px;
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 2px 7px;
+      white-space: nowrap;
+    }
+
+    .pdf-yes {
+      background: #065f46;
+      border-radius: 4px;
+      color: #6ee7b7;
+      font-size: 0.6rem;
+      font-weight: 600;
+      padding: 2px 5px;
+    }
+
+    /* Pipeline */
+    .pipeline-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .pipeline-item {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+
+    .pipeline-meta { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
+    .pipeline-role { color: #64748b; font-size: 0.75rem; }
+    .pipeline-url { color: #60a5fa; font-size: 0.7rem; word-break: break-all; text-decoration: none; }
+    .pipeline-url:hover { text-decoration: underline; }
+
+    .empty { color: #64748b; font-size: 0.85rem; padding: 12px 0; }
+
+    .updated { color: #475569; font-size: 0.65rem; margin-top: 4px; }
+
+    @media (min-width: 640px) {
+      .header, .section { padding-left: 24px; padding-right: 24px; }
+      .stats-grid { grid-template-columns: repeat(6, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Career Dashboard</h1>
+  <div class="subtitle">Alain Rex Banilad · Senior QA / SDET · Singapore</div>
+  <div class="updated">Updated 15 Apr 2026, 6:05 pm SGT</div>
+</div>
+
+<div class="section">
+  <div class="section-title">Overview</div>
+  
+    <div class="stats-grid">
+      
+        <div class="stat-card">
+          <div class="stat-value" style="color:#60a5fa">15</div>
+          <div class="stat-label">Total</div>
+        </div>
+      
+        <div class="stat-card">
+          <div class="stat-value" style="color:#3b82f6">7</div>
+          <div class="stat-label">Applied</div>
+        </div>
+      
+        <div class="stat-card">
+          <div class="stat-value" style="color:#8b5cf6">0</div>
+          <div class="stat-label">Interview</div>
+        </div>
+      
+        <div class="stat-card">
+          <div class="stat-value" style="color:#10b981">0</div>
+          <div class="stat-label">Offer</div>
+        </div>
+      
+        <div class="stat-card">
+          <div class="stat-value" style="color:#ef4444">1</div>
+          <div class="stat-label">Rejected</div>
+        </div>
+      
+        <div class="stat-card">
+          <div class="stat-value" style="color:#f59e0b">2.9</div>
+          <div class="stat-label">Avg Score</div>
+        </div>
+      
+    </div>
+  
+</div>
+
+<div class="section" style="margin-top:20px">
+  <div class="section-title">Applications (15)</div>
+  <div class="filter-row" id="filter-row">
+    
+      <button class="filter-btn active" data-status="All" onclick="filterTable(this)">All</button>
+    
+      <button class="filter-btn" data-status="Applied" onclick="filterTable(this)">Applied</button>
+    
+      <button class="filter-btn" data-status="Interview" onclick="filterTable(this)">Interview</button>
+    
+      <button class="filter-btn" data-status="Offer" onclick="filterTable(this)">Offer</button>
+    
+      <button class="filter-btn" data-status="Evaluated" onclick="filterTable(this)">Evaluated</button>
+    
+      <button class="filter-btn" data-status="Responded" onclick="filterTable(this)">Responded</button>
+    
+      <button class="filter-btn" data-status="Rejected" onclick="filterTable(this)">Rejected</button>
+    
+      <button class="filter-btn" data-status="Discarded" onclick="filterTable(this)">Discarded</button>
+    
+      <button class="filter-btn" data-status="SKIP" onclick="filterTable(this)">SKIP</button>
+    
+  </div>
+  
+    <div class="table-wrap">
+      <table id="apps-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Date</th>
+            <th>Company</th>
+            <th>Role</th>
+            <th>Score</th>
+            <th>Status</th>
+            <th>PDF</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+      <tr>
+        <td class="num">#15</td>
+        <td class="date">2026-04-15</td>
+        <td class="company"><strong>Octal Tech</strong></td>
+        <td class="role">Software Development Engineer (Automation)</td>
+        <td class="score" style="color:#f59e0b">
+          3.5/5
+          <div class="score-bar"><div class="score-fill" style="width:70%;background:#f59e0b"></div></div>
+        </td>
+        <td class="status"><span class="badge" style="background:#3b82f6;color:#fff">Applied</span></td>
+        <td class="pdf"><span class="pdf-yes">PDF</span></td>
+        <td class="notes">Verify salary FIRST — PH company, high risk of below-floor comp. Strong tech fit (4.5/5). Email sabrina.formilleza@octaltech.net for range before applying.</td>
+      </tr>
+    
+      <tr>
+        <td class="num">#14</td>
+        <td class="date">2026-04-13</td>
+        <td class="company"><strong>Aras Corporation</strong></td>
+        <td class="role">Senior QA Engineer - Automation</td>
+        <td class="score" style="color:#ef4444">
+          1.8/5
+          <div class="score-bar"><div class="score-fill" style="width:36%;background:#ef4444"></div></div>
+        </td>
+        <td class="status"><span class="badge" style="background:#f59e0b;color:#000">Evaluated</span></td>
+        <td class="pdf"></td>
+        <td class="notes">SKIP — Poland residency + C#/.NET required. Double hard blocker. Tech stack mismatch.</td>
+      </tr>
+    
+      <tr>
+        <td class="num">#13</td>
+        <td class="date">2026-04-13</td>
+        <td class="company"><strong>PriceLabs</strong></td>
+        <td class="role">Automation QA Engineer</td>
+        <td class="score" style="color:#ef4444">
+          1.5/5
+          <div class="score-bar"><div class="score-fill" style="width:30%;background:#ef4444"></div></div>
+        </td>
+        <td class="status"><span class="badge" style="background:#f59e0b;color:#000">Evaluated</span></td>
+        <td class="pdf"></td>
+        <td class="notes">SKIP — India remote only (must reside in India). Hard location blocker for SG-based candidate.</td>
+      </tr>
+    
+      <tr>
+        <td class="num">#12</td>
+        <td class="date">2026-04-13</td>
+        <td class="company"><strong>Serve Robotics</strong></td>
+        <td class="role">QA Engineer, Platform and Ops Tooling</td>
+        <td class="score" style="color:#f59e0b">
+          3.2/5
+          <div class="score-bar"><div class="score-fill" style="width:64%;background:#f59e0b"></div></div>
+        </td>
+        <td class="status"><span class="badge" style="background:#3b82f6;color:#fff">Applied</span></td>
+        <td class="pdf"></td>
+        <td class="notes">Apply if US remote globally eligible. Automotive background is a genuine differentiator for robotics QA. Verify US residency first.</td>
+      </tr>
+    
+      <tr>
+        <td class="num">#11</td>
+        <td class="date">2026-04-13</td>
+        <td class="company"><strong>Blackthorn.io</strong></td>
+        <td class="role">Sr. QA Engineer</td>
+        <td class="score" style="color:#ef4444">
+          2.0/5
+          <div class="score-bar"><div class="score-fill" style="width:40%;background:#ef4444"></div></div>
+        </td>
+        <td class="status"><span class="badge" style="background:#f59e0b;color:#000">Evaluated</span></td>
+        <td class="pdf"></td>
+        <td class="notes">SKIP — US states only + 3yr Salesforce required. Double hard blocker.</td>
+      </tr>
+    
+      <tr>
+        <td class="num">#10</td>
+        <td class="date">2026-04-13</td>
+        <td class="company"><strong>Documo</strong></td>
+        <td class="role">QA Engineer</td>
+        <td class="score" style="color:#f59e0b">
+          3.8/5
+          <div class="score-bar"><div class="score-fill" style="width:76%;background:#f59e0b"></div></div>
+        </td>
+        <td class="status"><span class="badge" style="background:#3b82f6;color:#fff">Applied</span></td>
+        <td class="pdf"></td>
+        <td class="notes">Apply — strong API/CI/CD match, uses Claude Code in stack. Verify global vs US-only remote. Mention Claude Code in cover letter.</td>
+      </tr>
+    
+      <tr>
+        <td class="num">#9</td>
+        <td class="date">2026-04-13</td>
+        <td class="company"><strong>Mill</strong></td>
+        <td class="role">Software Development Engineer - Test</td>
+        <td class="score" style="color:#ef4444">
+          1.8/5
+          <div class="score-bar"><div class="score-fill" style="width:36%;background:#ef4444"></div></div>
+        </td>
+        <td class="status"><span class="badge" style="background:#f59e0b;color:#000">Evaluated</span></td>
+        <td class="pdf"></td>
+        <td class="notes">SKIP — on-site San Bruno CA. US visa + relocation required. Not viable for SG-based search.</td>
+      </tr>
+    
+      <tr>
+        <td class="num">#8</td>
+        <td class="date">2026-04-13</td>
+        <td class="company"><strong>Flex</strong></td>
+        <td class="role">Senior SDET</td>
+        <td class="score" style="color:#f59e0b">
+          3.0/5
+          <div class="score-bar"><div class="score-fill" style="width:60%;background:#f59e0b"></div></div>
+        </td>
+        <td class="status"><span class="badge" style="background:#6b7280;color:#fff">Discarded</span></td>
+        <td class="pdf"></td>
+        <td class="notes">Low-confidence apply — &quot;Remote US&quot; likely requires US residency. Exceptional comp if eligible. Quick apply only.</td>
+      </tr>
+    
+      <tr>
+        <td class="num">#7</td>
+        <td class="date">2026-04-13</td>
+        <td class="company"><strong>RapidFort Inc</strong></td>
+        <td class="role">SR SDET / Sr QA Automation Engineer</td>
+        <td class="score" style="color:#f59e0b">
+          3.5/5
+          <div class="score-bar"><div class="score-fill" style="width:70%;background:#f59e0b"></div></div>
+        </td>
+        <td class="status"><span class="badge" style="background:#3b82f6;color:#fff">Applied</span></td>
+        <td class="pdf"></td>
+        <td class="notes">Apply — USD $120-150K, perfect SDET archetype. Risk: US timezone from SG, Docker/CLI gaps, 9yr vs 10yr req.</td>
+      </tr>
+    
+      <tr>
+        <td class="num">#6</td>
+        <td class="date">2026-04-13</td>
+        <td class="company"><strong>EWA Learn Languages</strong></td>
+        <td class="role">QA Engineer – Web Growth</td>
+        <td class="score" style="color:#f59e0b">
+          3.5/5
+          <div class="score-bar"><div class="score-fill" style="width:70%;background:#f59e0b"></div></div>
+        </td>
+        <td class="status"><span class="badge" style="background:#6b7280;color:#fff">Discarded</span></td>
+        <td class="pdf"></td>
+        <td class="notes">Apply — SG remote, recent Mar 2026 posting, EdTech. JD not fully accessible (403). Confirm details first.</td>
+      </tr>
+    
+      <tr>
+        <td class="num">#5</td>
+        <td class="date">2026-04-13</td>
+        <td class="company"><strong>Screening Eagle Technologies</strong></td>
+        <td class="role">QA Engineer</td>
+        <td class="score" style="color:#f59e0b">
+          3.8/5
+          <div class="score-bar"><div class="score-fill" style="width:76%;background:#f59e0b"></div></div>
+        </td>
+        <td class="status"><span class="badge" style="background:#3b82f6;color:#fff">Applied</span></td>
+        <td class="pdf"></td>
+        <td class="notes">Priority apply — SG product company, Python/CI/CD match, Fusionopolis. Mobile automation gap to address. Verify salary.</td>
+      </tr>
+    
+      <tr>
+        <td class="num">#4</td>
+        <td class="date">2026-04-13</td>
+        <td class="company"><strong>Sea Limited / Shopee</strong></td>
+        <td class="role">QA Engineer (ShopeePay)</td>
+        <td class="score" style="color:#ef4444">
+          2.8/5
+          <div class="score-bar"><div class="score-fill" style="width:55.99999999999999%;background:#ef4444"></div></div>
+        </td>
+        <td class="status"><span class="badge" style="background:#3b82f6;color:#fff">Applied</span></td>
+        <td class="pdf"></td>
+        <td class="notes">SKIP — Jakarta not Singapore. Strong payment domain fit but Indonesia comp. Watch for SG ShopeePay openings.</td>
+      </tr>
+    
+      <tr>
+        <td class="num">#3</td>
+        <td class="date">2026-04-13</td>
+        <td class="company"><strong>Sea Limited / Sea Labs</strong></td>
+        <td class="role">QA Engineer (Digital Purchase)</td>
+        <td class="score" style="color:#ef4444">
+          2.8/5
+          <div class="score-bar"><div class="score-fill" style="width:55.99999999999999%;background:#ef4444"></div></div>
+        </td>
+        <td class="status"><span class="badge" style="background:#3b82f6;color:#fff">Applied</span></td>
+        <td class="pdf"></td>
+        <td class="notes">SKIP — Jakarta not Singapore. Indonesia market comp below floor. Monitor Sea SG roles separately.</td>
+      </tr>
+    
+      <tr>
+        <td class="num">#2</td>
+        <td class="date">2026-04-13</td>
+        <td class="company"><strong>LTA / GovTech Singapore</strong></td>
+        <td class="role">Executive Engineer / Engineer (Quality Assurance)</td>
+        <td class="score" style="color:#f59e0b">
+          3.5/5
+          <div class="score-bar"><div class="score-fill" style="width:70%;background:#f59e0b"></div></div>
+        </td>
+        <td class="status"><span class="badge" style="background:#ef4444;color:#fff">Rejected</span></td>
+        <td class="pdf"></td>
+        <td class="notes">Apply — stable SG govt role, EP-friendly, process QA focus. Closes May 8.</td>
+      </tr>
+    
+      <tr>
+        <td class="num">#1</td>
+        <td class="date">2026-04-13</td>
+        <td class="company"><strong>Global Fishing Watch</strong></td>
+        <td class="role">API &amp; Front-End QA Automation Engineer</td>
+        <td class="score" style="color:#ef4444">
+          2.5/5
+          <div class="score-bar"><div class="score-fill" style="width:50%;background:#ef4444"></div></div>
+        </td>
+        <td class="status"><span class="badge" style="background:#f59e0b;color:#000">Evaluated</span></td>
+        <td class="pdf"></td>
+        <td class="notes">SKIP — LatAm-based contractors only (Argentina/Chile/Brazil/Colombia). Hard location blocker for SG-based candidate.</td>
+      </tr>
+    </tbody>
+      </table>
+    </div>
+  
+</div>
+
+<div class="section" style="margin-top:24px">
+  <div class="section-title">Pipeline — Pending Evaluation (2)</div>
+  <div class="pipeline-list">
+    <div class="pipeline-item">
+      <div class="pipeline-meta">
+        <strong>Binance</strong>
+        <span class="pipeline-role">Senior Automation QA Engineer / SDET (Python)</span>
+      </div>
+      <a class="pipeline-url" href="https://jobs.lever.co/binance/044d292f-a98d-48d4-9aad-77f2354619ae" target="_blank" rel="noopener">
+        https://jobs.lever.co/binance/044d292f-a98d-48d4-9aad-77f235…
+      </a>
+    </div>
+  
+    <div class="pipeline-item">
+      <div class="pipeline-meta">
+        <strong>Binance</strong>
+        <span class="pipeline-role">Senior QA Engineer - SDET (RM)</span>
+      </div>
+      <a class="pipeline-url" href="https://jobs.lever.co/binance/da7ab85d-f832-4331-a669-03a141eb9307" target="_blank" rel="noopener">
+        https://jobs.lever.co/binance/da7ab85d-f832-4331-a669-03a141…
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  function filterTable(btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const status = btn.dataset.status;
+    document.querySelectorAll('#apps-table tbody tr').forEach(row => {
+      if (status === 'All') {
+        row.classList.remove('hidden');
+      } else {
+        const badge = row.querySelector('.badge');
+        const rowStatus = badge ? badge.textContent.trim() : '';
+        row.classList.toggle('hidden', rowStatus !== status);
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
