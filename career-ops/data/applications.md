@@ -2,10 +2,10 @@
 
 | # | Date | Company | Role | Score | Status | PDF | Report | Notes |
 |---|------|---------|------|-------|--------|-----|--------|-------|
-| 36 | 2026-04-20 | Multibank Group | QA Engineer | 3.8/5 | Evaluated | ✅ | [036](reports/036-multibank-group-qa-engineer-2026-04-20.md) | Fully remote fintech; strong Python/Selenium/Jenkins match; salary undisclosed; posting ~60 days old — verify still active |
+| 36 | 2026-04-20 | Multibank Group | QA Engineer | 3.8/5 | Applied | ✅ | [036](reports/036-multibank-group-qa-engineer-2026-04-20.md) | Fully remote fintech; strong Python/Selenium/Jenkins match; salary undisclosed; posting ~60 days old — follow up if no response in 5 days |
 | 37 | 2026-04-20 | Binance | Senior Automation QA / SDET (Python) | 4.0/5 | Evaluated | ✅ | [037](reports/037-binance-senior-automation-qa-sdet-python-2026-04-20.md) | Primary archetype match — Python SDET, backend integration, remote APAC. No citizenship req. Apply this week. |
 | 38 | 2026-04-20 | Binance | Senior QA Engineer - SDET (RM) | 3.6/5 | Evaluated | ✅ | [038](reports/038-binance-senior-qa-sdet-rm-2026-04-20.md) | Java-preferred SDET for Risk Mgmt team; Python gap manageable; apply after report 037; add SQL to CV first |
-| 39 | 2026-04-20 | KnowBe4 | QA Engineer (MIS) | 3.5/5 | Evaluated | ✅ | [035](reports/035-knowbe4-qa-engineer-mis-2026-04-20.md) | Remote US role; Python/API/JIRA match; SaaS ERP domain gap; CONFIRM non-US remote eligibility before applying |
+| 39 | 2026-04-20 | KnowBe4 | QA Engineer (MIS) | 3.5/5 | Applied | ✅ | [035](reports/035-knowbe4-qa-engineer-mis-2026-04-20.md) | Applied 2026-04-20; verify non-US remote eligibility confirmed before interview stage |
 | 34 | 2026-04-16 | AEM Singapore | Validation Engineer | 3.2/5 | Interview | ❌ | [034](reports/034-aem-singapore-2026-04-16.md) | Interview 2026-04-22 11AM in-person — 52 Serangoon North Ave 4 |
 | 15 | 2026-04-15 | Octal Tech | Software Development Engineer (Automation) | 3.5/5 | Applied | ✅ | [33](reports/033-octal-tech-sde-automation-2026-04-15.md) | Verify salary FIRST — PH company, high risk of below-floor comp. Strong tech fit (4.5/5). Email sabrina.formilleza@octaltech.net for range before applying. |
 | 1 | 2026-04-13 | Global Fishing Watch | API & Front-End QA Automation Engineer | 2.5/5 | Evaluated | ❌ | [1](reports/001-global-fishing-watch-2026-04-13.md) | SKIP — LatAm-based contractors only (Argentina/Chile/Brazil/Colombia). Hard location blocker for SG-based candidate. |
