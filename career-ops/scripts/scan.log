@@ -1,0 +1,70 @@
+[ 202-16-Ap 18:00:01] === daily-scan START === 
+[ 202-16-Ap 18:00:01] Running portal scan... 
+Scanning 16 companies via API (19 skipped — no API detected)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Portal Scan — 2026-04-16
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Companies scanned:     16
+Total jobs found:      1047
+Filtered by title:     1047 removed
+Duplicates:            0 skipped
+New offers added:      0
+
+Errors (10):
+  ✗ Nium: HTTP 404
+  ✗ StashAway: HTTP 404
+  ✗ HashiCorp: HTTP 404
+  ✗ Funding Societies: HTTP 404
+  ✗ Shopify: HTTP 404
+  ✗ Zendesk: HTTP 404
+  ✗ Syfe: HTTP 404
+  ✗ Carro: HTTP 404
+  ✗ Aptiv: HTTP 404
+  ✗ Circles.Life: This operation was aborted
+
+→ Run /career-ops pipeline to evaluate new offers.
+→ Share results and get help: https://discord.gg/8pRpHETxa4
+[ 202-16-Ap 18:00:01] scan.mjs completed OK 
+[ 202-16-Ap 18:00:01] Exporting dashboard... 
+✓ Dashboard exported → docs/index.html
+  16 applications · 2 pending in pipeline
+  Stats: Applied=7 Interview=1 Offer=0
+[ 202-16-Ap 18:00:01] export-dashboard.mjs completed OK 
+[ 202-16-Ap 18:00:01] Committing changes... 
+warning: in the working copy of 'career-ops/docs/index.html', LF will be replaced by CRLF the next time Git touches it
+[ 202-17-Ap  9:00:01] === daily-scan START === 
+[ 202-17-Ap  9:00:01] Running portal scan... 
+Scanning 16 companies via API (19 skipped — no API detected)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Portal Scan — 2026-04-17
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Companies scanned:     16
+Total jobs found:      1054
+Filtered by title:     1054 removed
+Duplicates:            0 skipped
+New offers added:      0
+
+Errors (10):
+  ✗ Nium: HTTP 404
+  ✗ HashiCorp: HTTP 404
+  ✗ Funding Societies: HTTP 404
+  ✗ Shopify: HTTP 404
+  ✗ StashAway: HTTP 404
+  ✗ Syfe: HTTP 404
+  ✗ Zendesk: HTTP 404
+  ✗ Carro: HTTP 404
+  ✗ Circles.Life: This operation was aborted
+  ✗ Aptiv: This operation was aborted
+
+→ Run /career-ops pipeline to evaluate new offers.
+→ Share results and get help: https://discord.gg/8pRpHETxa4
+[ 202-17-Ap  9:00:01] scan.mjs completed OK 
+[ 202-17-Ap  9:00:01] Exporting dashboard... 
+✓ Dashboard exported → docs/index.html
+  16 applications · 2 pending in pipeline
+  Stats: Applied=7 Interview=1 Offer=0
+[ 202-17-Ap  9:00:01] export-dashboard.mjs completed OK 
+[ 202-17-Ap  9:00:01] Committing changes... 
+warning: in the working copy of 'career-ops/docs/index.html', LF will be replaced by CRLF the next time Git touches it
