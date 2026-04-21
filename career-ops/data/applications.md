@@ -2,6 +2,10 @@
 
 | # | Date | Company | Role | Score | Status | PDF | Report | Notes |
 |---|------|---------|------|-------|--------|-----|--------|-------|
+| 40 | 2026-04-21 | CoolGames | Senior QA Engineer | 3.3/5 | Evaluated | ❌ | [039](reports/039-coolgames-senior-qa-engineer-2026-04-21.md) | Worldwide remote, gamedev domain + JS/TS stack mismatch, salary undisclosed — apply only after comp check |
+| 41 | 2026-04-21 | XM | QA Software Test Automation Engineer - Java | 3.4/5 | Evaluated | ❌ | [040](reports/040-xm-qa-test-automation-engineer-java-2026-04-21.md) | Java gap (Python background); archetype fit strong; comp undisclosed — confirm salary before 4-stage process |
+| 42 | 2026-04-21 | Jobgether | Remote QA Engineer | 2.0/5 | SKIP | ❌ | [041](reports/041-jobgether-remote-qa-engineer-2026-04-21.md) | Posting closed/expired (403); aggregator anonymizes employer — unverifiable and not actionable |
+| 43 | 2026-04-21 | Jobgether | Remote QA Automation Lead | 2.0/5 | SKIP | ❌ | [042](reports/042-jobgether-remote-qa-automation-lead-2026-04-21.md) | Posting confirmed dead (HTTP 410); unknown employer; apply if live version re-appears |
 | 34 | 2026-04-16 | AEM Singapore | Validation Engineer | 3.2/5 | Interview | ❌ | [034](reports/034-aem-singapore-2026-04-16.md) | Interview 2026-04-22 11AM in-person — 52 Serangoon North Ave 4 |
 | 36 | 2026-04-20 | Multibank Group | QA Engineer | 3.8/5 | Applied | ✅ | [036](reports/036-multibank-group-qa-engineer-2026-04-20.md) | Fully remote fintech; Python/Selenium/Jenkins match; salary undisclosed — follow up ~2026-04-25 |
 | 39 | 2026-04-20 | KnowBe4 | QA Engineer (MIS) | 3.5/5 | Applied | ✅ | [035](reports/035-knowbe4-qa-engineer-mis-2026-04-20.md) | Applied 2026-04-20; confirm non-US remote eligibility if they respond |

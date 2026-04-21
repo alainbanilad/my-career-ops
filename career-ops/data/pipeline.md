@@ -5,6 +5,10 @@ Add job URLs here to queue them for evaluation via `/career-ops pipeline`.
 <!-- Format: one URL per line, optionally with a note -->
 <!-- Example: https://jobs.ashbyhq.com/company/job-id  # Source: LinkedIn -->
 
+<!-- === Scan: 2026-04-21 | Evaluated: 2026-04-21 === -->
+
+## Pending
+
 <!-- === Scan: 2026-04-20 | Evaluated: 2026-04-20 === -->
 
 <!-- === Scan: 2026-04-15 | Evaluated: 2026-04-20 === -->
@@ -27,6 +31,10 @@ Add job URLs here to queue them for evaluation via `/career-ops pipeline`.
 - [x] #14 | https://job-boards.greenhouse.io/mill/jobs/4676918005 | Mill | SDE Test | 1.8/5 | SKIP — on-site SF Bay Area
 - [x] #15 | https://job-boards.greenhouse.io/documocareers/jobs/4678991005 | Documo | QA Engineer | 3.8/5 ⭐ Apply (verify global remote)
 - [x] #16 | https://job-boards.greenhouse.io/blackthorn/jobs/5848843004 | Blackthorn.io | Sr. QA Engineer | 2.0/5 | SKIP — US + Salesforce required
+- [x] #40 | https://remotive.com/remote/jobs/qa/senior-qa-engineer-4398531 | CoolGames | Senior QA Engineer | 3.3/5 | Apply with caveats (verify salary first)
+- [x] #41 | https://weworkremotely.com/listings/xm-qa-software-test-automation-engineer-java | XM | QA Software Test Automation Engineer - Java | 3.4/5 | Apply with caveats (Java gap; verify comp)
+- [x] #42 | https://jobs.lever.co/jobgether/19ba8d10-a54d-438c-9438-990d702deda4 | Jobgether | Remote QA Engineer | 2.0/5 | SKIP — posting closed
+- [x] #43 | https://jobs.lever.co/jobgether/e133f812-210d-43d1-ac1a-8321f7c1eb55 | Jobgether | Remote QA Automation Lead | 2.0/5 | SKIP — posting closed
 - [x] #17 | https://jobs.ashbyhq.com/serverobotics/050cf1d0-4286-42e5-9b49-3659dada68d2 | Serve Robotics | QA Engineer | 3.2/5 | Apply (verify US remote)
 - [x] #31 | https://remotive.com/remote/jobs/qa/automation-qa-engineer-4281164 | PriceLabs | Automation QA Engineer | 1.5/5 | SKIP — India only
 - [x] #32 | https://remotive.com/remote/jobs/qa/senior-qa-engineer-automation-4280401 | Aras Corporation | Senior QA Engineer | 1.8/5 | SKIP — Poland + C#/.NET
