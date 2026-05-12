@@ -9,6 +9,8 @@ Add job URLs here to queue them for evaluation via `/career-ops pipeline`.
 
 ## Pending
 
+<!-- === Scan: 2026-04-28 | Evaluated: 2026-04-28 === -->
+
 <!-- === Scan: 2026-04-20 | Evaluated: 2026-04-20 === -->
 
 <!-- === Scan: 2026-04-15 | Evaluated: 2026-04-20 === -->
@@ -16,6 +18,18 @@ Add job URLs here to queue them for evaluation via `/career-ops pipeline`.
 <!-- === Scan: 2026-04-11 | Evaluated: 2026-04-13 === -->
 
 ## Processed (Non-MyCareersFuture)
+
+- [x] #047 | https://job-boards.greenhouse.io/startale/jobs/5177342008 | Startale | Senior QA Engineer (Trading) | 3.2/5 | Apply — Sony-backed Web3 infra; bridge JS tooling gap in cover letter
+- [x] #048 | https://job-boards.greenhouse.io/medrio/jobs/8468590002 | Medrio | Automation Engineer (SDET) | 4.2/5 | TOP PRIORITY APPLY — $120-140K USD worldwide remote; Python/Selenium/Jenkins stack match
+- [x] #049 | https://jobs.lever.co/binance/947f9876-13cc-4d0c-a9de-2cd8d60c22a9 | Binance | Senior QA Engineer - AI/LLM | 3.4/5 | Apply with caution — Java live coding required; Python gap is risk
+- [x] #050 | https://jobs.lever.co/binance/fae62bf6-84c8-4730-aa51-66cf5761dd3e | Binance | QA Engineer - Payment Tech | 3.8/5 | HIGH PRIORITY APPLY — NCR payment experience maps directly
+- [x] #051 | https://jobs.lever.co/binance/41e8bcbd-776c-40fa-b08b-e0f68a93e1bc | Binance | QA Engineer (Binance Square) | 3.5/5 | Apply — web automation fit; lower priority vs payment roles
+- [x] #052 | https://jobs.lever.co/binance/45cb78aa-d487-4c4b-a1d2-377dbb971fe6 | Binance | Senior Automation QA Engineer (Java) | 2.8/5 | SKIP — Java live coding mandatory; Python-primary mismatch
+- [x] #053 | https://jobs.lever.co/binance/df3ad053-607b-4f2a-a5ff-4da95892cc76 | Binance | Senior QA Engineer (Payment product) | 3.9/5 | HIGH PRIORITY APPLY — 7yr+ bar met; NCR payment proof points strong
+- [x] #054 | https://jobs.lever.co/binance/f9661435-5cf5-4a6a-b121-23ddcf0d5229 | Binance | Senior QA Engineer - Web3 Wallet | 3.3/5 | Apply — Selenium+Python core fit; Appium gap acknowledged
+- [x] #055 | https://jobs.lever.co/binance/2c4a2212-9eba-47b0-a66a-39566cae53e6 | Binance | Architect QA Engineer (Java, Middleware) | 2.5/5 | SKIP — Java architect assessment + microservices domain; hard blockers
+- [x] #056 | https://jobs.lever.co/binance/c0cebe1f-0bb6-45cf-8f54-d391b130a1e9 | Binance | Web3 Wallet - QA Engineer | 3.2/5 | Apply #053 (Senior) only; skip this non-Senior duplicate on same team
+- [x] #057 | https://jobs.lever.co/binance/d5591e60-0d81-4e51-9f7c-4f1f5c8709f0 | Binance | QA Engineer (APP Testing, Java) | 2.7/5 | SKIP — Mandarin required (hard blocker) + Java + mobile
 
 - [x] #37 | https://jobs.lever.co/binance/044d292f-a98d-48d4-9aad-77f2354619ae | Binance | Senior Automation QA / SDET (Python) | 4.0/5 ⭐ Apply
 - [x] #36 | https://jobs.ashbyhq.com/mexdigital/16d5e7c6-7af0-4dc8-a510-1f79f1fdda2a | Multibank Group | QA Engineer (Remote) | 3.8/5 ⭐ Apply (verify posting still active)
@@ -39,3 +53,8 @@ Add job URLs here to queue them for evaluation via `/career-ops pipeline`.
 - [x] #31 | https://remotive.com/remote/jobs/qa/automation-qa-engineer-4281164 | PriceLabs | Automation QA Engineer | 1.5/5 | SKIP — India only
 - [x] #32 | https://remotive.com/remote/jobs/qa/senior-qa-engineer-automation-4280401 | Aras Corporation | Senior QA Engineer | 1.8/5 | SKIP — Poland + C#/.NET
 - [x] #1  | https://job-boards.greenhouse.io/globalfishingwatch/jobs/7684996003 | Global Fishing Watch | API & Front-End QA Automation Engineer | 2.5/5 | SKIP — LatAm only
+
+## Pendientes
+
+- [ ] https://job-boards.greenhouse.io/mozilla/jobs/7895365 | Mozilla | Firefox Software Test Engineering Student Worker
+
