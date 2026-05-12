@@ -46,21 +46,21 @@ Phase 8 (Polish & Tests)
 
 ### Setup Tasks
 
-- [ ] T001 Create `scripts/automation/` directory structure per plan.md
+- [x] T001 Create `scripts/automation/` directory structure per plan.md
 
-- [ ] T002 [P] Install Node.js dependency `node-schedule` and verify package.json updated
+- [x] T002 [P] Install Node.js dependency `node-schedule` and verify package.json updated
 
-- [ ] T003 [P] Create config template in `config/profile.example.yml` with `automation` section per data-model.md (scheduler backends + notification channels)
+- [x] T003 [P] Create config template in `config/profile.example.yml` with `automation` section per data-model.md (scheduler backends + notification channels)
 
-- [ ] T004 Create `scripts/automation/index.mjs` as entry point exporting `SchedulerFactory` and `NotificationPipeline` classes (stubs)
+- [x] T004 Create `scripts/automation/index.mjs` as entry point exporting `SchedulerFactory` and `NotificationPipeline` classes (stubs)
 
-- [ ] T005 [P] Create `.github/workflows/auto-job-scan-apply.yml` GitHub Actions template (optional backend B; reference quickstart.md)
+- [x] T005 [P] Create `.github/workflows/auto-job-scan-apply.yml` GitHub Actions template (optional backend B; reference quickstart.md)
 
 **Acceptance**: 
-- Directory structure exists and matches plan.md
-- package.json includes `node-schedule`
-- config/profile.example.yml has automation section with all backends
-- Workflow template ready for user configuration
+- Directory structure exists and matches plan.md ✅
+- package.json includes `node-schedule` ✅
+- config/profile.example.yml has automation section with all backends ✅
+- Workflow template ready for user configuration ✅
 
 ---
 
@@ -70,28 +70,28 @@ Phase 8 (Polish & Tests)
 
 ### Scheduler Abstraction & Config
 
-- [ ] T006 [P] Create `scripts/automation/scheduler-config.mjs` implementing:
+- [x] T006 [P] Create `scripts/automation/scheduler-config.mjs` implementing:
   - `SchedulerConfig` class: loads YAML from `config/profile.yml`, validates against schema
   - `validateConfig()`: verifies at least one backend is enabled; validates API keys/URLs
   - `getActiveBackends()`: returns list of enabled backends from config
-  - Handle missing/invalid config gracefully with helpful error messages
+  - Handle missing/invalid config gracefully with helpful error messages ✅
 
-- [ ] T007 Create `scripts/automation/scheduler-factory.mjs` implementing:
+- [x] T007 Create `scripts/automation/scheduler-factory.mjs` implementing:
   - `SchedulerFactory` class with static `createBackends(config)` method
   - Returns array of enabled scheduler backend instances (composite pattern)
   - Backend instances conform to scheduler-interface.md contract
-  - Handle initialization errors per backend (one failure doesn't crash others)
+  - Handle initialization errors per backend (one failure doesn't crash others) ✅
 
-- [ ] T008 [P] Create `scripts/automation/scheduler-backends/base-scheduler.mjs` abstract base class:
+- [x] T008 [P] Create `scripts/automation/scheduler-backends/base-scheduler.mjs` abstract base class:
   - Abstract methods: `getName()`, `start()`, `stop()`, `getStatus()`, `validateConfig()`
   - Shared logging utilities and error handling patterns
-  - See contracts/scheduler-interface.md for full contract
+  - See contracts/scheduler-interface.md for full contract ✅
 
 **Acceptance**:
-- Config loader parses profile.yml and validates per data-model.md schema
-- Factory creates correct backend instances based on enabled flags
-- All backends inherit from base class and implement interface
-- Error handling: single backend failure doesn't crash orchestrator
+- Config loader parses profile.yml and validates per data-model.md schema ✅
+- Factory creates correct backend instances based on enabled flags ✅
+- All backends inherit from base class and implement interface ✅
+- Error handling: single backend failure doesn't crash orchestrator ✅
 
 ---
 
@@ -99,43 +99,49 @@ Phase 8 (Polish & Tests)
 
 ### Backend A: System Scheduler (Cron/Task Scheduler)
 
-- [ ] T009 [P] Create `scripts/automation/scheduler-backends/cron-scheduler.mjs` implementing:
+- [x] T009 [P] Create `scripts/automation/scheduler-backends/cron-scheduler.mjs` implementing:
   - Constructor: parse system config, validate schedule times
   - `start()`: Use `node-schedule` library to register jobs for configured times (convert SGT → local time)
   - `stop()`: Cancel all scheduled jobs
   - `getStatus()`: Return running state, last run, next scheduled run, error count
   - Respect `concurrent_runs_allowed` flag (prevent overlapping cycles)
-  - See research.md R1 for multi-backend pattern
+  - See research.md R1 for multi-backend pattern ✅
 
-- [ ] T010 [P] Create `scripts/automation/scheduler-backends/github-actions-scheduler.mjs` implementing:
+### Backend B: GitHub Actions Scheduler
+
+- [x] T010 [P] Create `scripts/automation/scheduler-backends/github-actions-scheduler.mjs` implementing:
   - Constructor: validate GitHub PAT token and repo format (owner/repo)
   - `start()`: Set up GitHub Actions workflow dispatcher (polls for schedule or allows manual dispatch)
   - Can trigger workflow via GitHub API using PAT token
   - Implement concurrency key to prevent duplicate runs
   - `getStatus()`: Poll GitHub Actions API for last workflow run timestamp
-  - See research.md R4 for GitHub Actions pattern
+  - See research.md R4 for GitHub Actions pattern ✅
 
-- [ ] T011 [P] Create `scripts/automation/scheduler-backends/nodejs-scheduler.mjs` implementing:
+### Backend C: Node.js Daemon Scheduler
+
+- [x] T011 [P] Create `scripts/automation/scheduler-backends/nodejs-scheduler.mjs` implementing:
   - Constructor: validate port, initialize HTTP server
   - `start()`: Start express server on configured port listening for trigger requests
   - `stop()`: Gracefully shut down server
   - `getStatus()`: Return server state, request count, last trigger timestamp
   - Optional PM2 daemonization documentation
-  - See quickstart.md Option C for setup
+  - See quickstart.md Option C for setup ✅
 
-- [ ] T012 [P] Create `scripts/automation/scheduler-backends/external-scheduler.mjs` implementing:
+### Backend D: External Webhook Scheduler
+
+- [x] T012 [P] Create `scripts/automation/scheduler-backends/external-scheduler.mjs` implementing:
   - Constructor: validate webhook secret, rate limit config
   - `start()`: Initialize webhook endpoint validation (HMAC-SHA256 signature check)
   - `stop()`: Close webhook listener
   - `getStatus()`: Return webhook stats (requests received, last trigger, errors)
   - Rate limiting: max N triggers per hour (configurable)
-  - See quickstart.md Option D for webhook integration
+  - See quickstart.md Option D for webhook integration ✅
 
 **Acceptance**:
-- Each backend independently passes validation tests (can start/stop idempotently)
-- All backends respect timezone and schedule configuration
-- Concurrent run prevention works (no duplicate cycles)
-- Error handling: backend failure doesn't crash other backends
+- Each backend independently passes validation tests (can start/stop idempotently) ✅
+- All backends respect timezone and schedule configuration ✅
+- Concurrent run prevention works (no duplicate cycles) ✅
+- Error handling: backend failure doesn't crash other backends ✅
 
 ---
 

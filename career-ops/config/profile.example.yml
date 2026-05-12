@@ -69,3 +69,64 @@ location:
   visa_status: "No sponsorship needed"
   # For remote roles outside your country:
   # onsite_availability: "1 week/month in any city"
+
+automation:
+  # Global automation settings
+  enabled: false                              # Set to true to enable daily automation
+  timezone: "Asia/Singapore"                  # Timezone for schedule times (IANA format)
+  concurrent_runs_allowed: false              # Prevent overlapping cycles (recommended: false)
+
+  # Per-backend scheduler configuration
+  schedulers:
+    # Backend A: System Scheduler (cron on Linux/Mac, Task Scheduler on Windows)
+    system:
+      enabled: false                          # Set to true to use system scheduler
+      timezone: "Asia/Singapore"
+      schedule:
+        - time: "09:00"                       # 9 AM SGT
+        - time: "18:00"                       # 6 PM SGT (18:00 in 24-hour format)
+
+    # Backend B: GitHub Actions Workflow Dispatcher
+    github_actions:
+      enabled: false                          # Set to true to use GitHub Actions
+      personal_access_token: ""               # GitHub PAT with workflow scope (see quickstart.md)
+      repository: ""                          # Format: owner/repo (e.g., santifer/career-ops)
+      workflow_file: ".github/workflows/auto-job-scan-apply.yml"
+      concurrency_group: "auto-scan-apply"    # Prevent concurrent runs
+
+    # Backend C: Node.js Daemon (express server with node-schedule)
+    nodejs:
+      enabled: false                          # Set to true to run local daemon
+      port: 3000
+      host: "localhost"
+      # Schedule times (node-schedule format: HH:MM in 24-hour format)
+      schedule:
+        - "0 9 * * *"                         # 9 AM SGT every day
+        - "0 18 * * *"                        # 6 PM SGT every day
+
+    # Backend D: External Scheduler (webhook endpoint)
+    external:
+      enabled: false                          # Set to true to accept external triggers
+      webhook_path: "/automation/trigger"     # HTTP endpoint (e.g., POST /automation/trigger)
+      webhook_secret: ""                      # Shared secret for HMAC validation (generate via: openssl rand -hex 32)
+      rate_limit_per_hour: 10                 # Max triggers per hour
+
+  # Notification channels (all optional)
+  notifications:
+    # Channel A: Console (always enabled, logs to terminal)
+    console:
+      enabled: true                           # Recommend: always true (logs to terminal)
+
+    # Channel C: Slack Webhook
+    slack:
+      enabled: false                          # Set to true to send Slack notifications
+      webhook_url: ""                         # Get from Slack workspace admin (see quickstart.md)
+      mentions: "@here"                       # Optional: mention user or group (e.g., @yourname)
+      thread_replies: true                    # Group related messages in thread
+
+    # Channel D: Obsidian Daily Log
+    obsidian:
+      enabled: false                          # Set to true to log sessions to Obsidian
+      vault_path: ""                          # Path to Obsidian vault (e.g., D:\AI_BRAIN\Claude-Obsidian\claude-obsidian)
+      session_folder: "Career-Ops/Sessions"   # Folder within vault for session logs
+      daily_digest: false                     # Optional: append to monthly digest file

@@ -1,0 +1,47 @@
+name: Auto Job Scan Apply
+
+on:
+  schedule:
+    # 9 AM SGT = 1 AM UTC
+    - cron: '0 1 * * *'
+    # 6 PM SGT = 10 AM UTC
+    - cron: '0 10 * * *'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  scan-and-apply:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Run automation cycle
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        run: |
+          node scripts/automation/orchestrator.mjs --trigger=github-actions
+      
+      - name: Commit and push results
+        if: always()
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add data/ reports/ output/ batch/tracker-additions/
+          git diff --quiet --cached || git commit -m "automation: scan and apply results [skip ci]"
+          git push
+        continue-on-error: true
+
+concurrency:
+  group: auto-scan-apply
+  cancel-in-progress: false
