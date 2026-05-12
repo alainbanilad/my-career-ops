@@ -4,7 +4,7 @@
 
 ## Pre-Deployment Verification (10 items)
 
-- [ ] **1. Config Validation** — Run: `node cli.mjs validate-config`
+- [ ] **1. Config Validation** — Run: `node scripts/automation/cli.mjs validate-config`
   - All scheduler backends have required configuration
   - At least one backend is enabled
   - Timezone is valid (IANA format)
@@ -23,7 +23,7 @@
   - No missing required fields
   - Obsidian vault is accessible (if configured)
 
-- [ ] **5. Scheduler Test** — Run: `node cli.mjs run-once`
+- [ ] **5. Scheduler Test** — Run: `node scripts/automation/cli.mjs run-once`
   - Orchestrator starts without errors
   - Scan completes successfully
   - Session log created (if Obsidian configured)
@@ -34,7 +34,7 @@
   - Obsidian session file created (if enabled)
 
 - [ ] **7. Cron Setup** (if using system scheduler)
-  - `node cli.mjs start` runs in background
+  - `node scripts/automation/cli.mjs start` runs in background
   - Cron logs show successful triggers
   - Verify: `crontab -l` (Linux/Mac) or Task Scheduler (Windows)
 
@@ -55,7 +55,7 @@
 
 ## Post-Deployment Monitoring (ongoing)
 
-- [ ] **Metrics Dashboard** — Run: `node scripts/automation/metrics.mjs`
+- [ ] **Metrics Dashboard** — Run: `node scripts/automation/cli.mjs metrics`
   - Check uptime percentage (target: 99% over 30 days)
   - Review average cycle duration
   - Alert if uptime drops below 95%
@@ -76,7 +76,7 @@
 - [ ] Verify system time is correct (cron uses system clock)
 - [ ] Verify config timezone matches system timezone
 - [ ] Check logs for errors: `tail logs/automation/*.log`
-- [ ] Test manually: `node cli.mjs run-once`
+- [ ] Test manually: `node scripts/automation/cli.mjs run-once`
 
 **Issue: Slack notifications not received**
 - [ ] Verify webhook URL is correct and active

@@ -7,6 +7,7 @@
 import { Orchestrator } from './orchestrator.mjs';
 import { SchedulerConfig } from './scheduler-config.mjs';
 import { ConfigValidator } from './config-validator.mjs';
+import { MetricsTracker } from './metrics.mjs';
 
 const args = process.argv.slice(2);
 const command = args[0] || 'help';
@@ -21,8 +22,12 @@ async function main() {
 
     switch (command) {
       case 'start':
-        await orchestrator.initialize();
-        await orchestrator.start();
+        if (!(await orchestrator.initialize())) {
+          process.exit(1);
+        }
+        if (!(await orchestrator.start())) {
+          process.exit(1);
+        }
         console.log('\n✅ Automation started. Press Ctrl+C to stop.');
         // Keep process alive
         await new Promise(resolve => {
@@ -34,8 +39,12 @@ async function main() {
         break;
 
       case 'stop':
-        await orchestrator.initialize();
-        await orchestrator.stop();
+        if (!(await orchestrator.initialize())) {
+          process.exit(1);
+        }
+        if (!(await orchestrator.stop())) {
+          process.exit(1);
+        }
         break;
 
       case 'status':
@@ -56,12 +65,18 @@ async function main() {
 
       case 'run-once':
         const action = args[1] || 'full';
-        await orchestrator.initialize();
+        if (!(await orchestrator.initialize())) {
+          process.exit(1);
+        }
         console.log(`Running action: ${action}`);
         // Trigger one cycle manually
         if (orchestrator.schedulers) {
           await orchestrator._handleTrigger({ backend: 'cli' });
         }
+        break;
+
+      case 'metrics':
+        new MetricsTracker().printReport(30);
         break;
 
       case 'help':
@@ -77,12 +92,14 @@ Commands:
   status             Show current status
   validate-config    Validate configuration
   run-once           Run single automation cycle
+  metrics            Show uptime metrics (last 30 days)
   help               Show this help message
 
 Examples:
   node cli.mjs start
   node cli.mjs status
   node cli.mjs validate-config
+  node cli.mjs metrics
         `);
         break;
     }

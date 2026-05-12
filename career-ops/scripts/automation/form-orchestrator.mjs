@@ -42,7 +42,7 @@ export class FormOrchestrator {
         company: pipelineEntry.company,
         role: pipelineEntry.title,
         url: pipelineEntry.url,
-        status: 'Draft',
+        status: 'Evaluated',
         draftId: result.draftId,
         timestamp: new Date().toISOString(),
         duration: parseFloat(duration),
@@ -83,7 +83,7 @@ export class FormOrchestrator {
    * Write form draft to tracker additions (TSV format for merge-tracker.mjs)
    * @private
    */
-  _writeTsvEntry(company, role, url, status = 'Draft') {
+  _writeTsvEntry(company, role, url, status = 'Evaluated') {
     const date = new Date().toISOString().slice(0, 10);
     const tsvPath = 'batch/tracker-additions';
 

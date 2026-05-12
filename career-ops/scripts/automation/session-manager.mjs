@@ -5,8 +5,7 @@
  * Maintains persistent state in config file.
  */
 
-import fs from 'fs';
-import { v4 as uuidv4 } from 'crypto';
+import { randomUUID } from 'crypto';
 
 export class SessionManager {
   constructor(configPath = 'config/profile.yml') {
@@ -23,7 +22,7 @@ export class SessionManager {
       throw new Error('Session already active');
     }
 
-    const sessionId = `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const sessionId = `session-${randomUUID()}`;
     this.currentSession = {
       id: sessionId,
       startTime: new Date(),

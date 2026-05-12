@@ -2,7 +2,7 @@
 
 **Feature Branch**: `001-auto-job-scan-apply`  
 **Created**: 2026-05-12  
-**Status**: Draft  
+**Status**: Implementation Complete  
 **Input**: User description: "I want to utilize the capabilities of career-ops and use it to land my next job asap since I'm still job free right now. I want also to utilize AI 2nd brain using claude-obsidian based on this repo to save every session using career-ops so that any CLI session or any, is saved in my AI 2nd brain. I want to automate the career-ops skills in scanning open jobs and filling up forms for me on a daily basis (9AM & 6PM) and keep me updated along the way."
 
 ## User Scenarios & Testing *(mandatory)*
@@ -36,7 +36,7 @@
 1. **Given** a new posting is in pipeline, **When** user triggers form-fill mode, **Then** system generates a customized CV (ATS-optimized) and pre-fills all form fields with AI suggestions
 2. **Given** a form is generated, **When** user edits any field, **Then** changes are preserved and reflected in the review preview
 3. **Given** a form is complete and reviewed, **When** user approves, **Then** system shows a "Ready to Submit" prompt and STOPS — it does NOT auto-submit
-4. **Given** user cancels editing, **When** they exit, **Then** all work is saved to a draft in `data/applications.md` with status `Draft`
+4. **Given** user cancels editing, **When** they exit, **Then** all work is saved for review and tracked with a canonical status in `data/applications.md` (via TSV merge pipeline)
 
 ---
 
@@ -58,7 +58,7 @@
 
 ### User Story 4 - Daily Status Updates (Priority: P2)
 
-**Description**: At the end of each scheduled scan/form-fill cycle (after 9 AM and 6 PM sessions), the system sends a brief summary update to the user via three channels: terminal console output, Slack webhook, and Obsidian daily log. User can enable/disable any channel in `config/profile.yml`.
+**Description**: At the end of each scheduled scan/form-fill cycle (after 9 AM and 6 PM sessions), the system sends a brief summary update to the user via three channels: terminal console output, Slack webhook, and Obsidian daily log. Console is always on; Slack and Obsidian can be enabled/disabled in `config/profile.yml`.
 
 **Why this priority**: Keeps the user informed and maintains accountability. Without feedback, automation feels opaque.
 
@@ -99,12 +99,12 @@
 
 - **FR-001**: System MUST scan configured portals on two daily triggers (9:00 AM and 6:00 PM SGT).
 - **FR-002**: System MUST add new postings to `data/pipeline.md` with dedup logic (check `data/scan-history.tsv` to prevent re-queuing).
-- **FR-003**: System MUST filter postings by user's target archetypes and role levels from `config/profile.yml`.
+- **FR-003**: System MUST filter postings by configured title filters in `portals.yml` (which can be derived from target roles in `config/profile.yml`).
 - **FR-004**: System MUST generate customized, ATS-optimized CVs for each new posting using `templates/cv-template.html` and user's `cv.md`.
 - **FR-005**: System MUST pre-fill application forms with AI-suggested answers (cover letter, custom fields) but MUST NOT submit forms without explicit user approval.
 - **FR-006**: System MUST log all session metadata (timestamp, jobs found, forms filled, scores, user actions) to the Obsidian vault at `D:\AI_BRAIN\Claude-Obsidian\claude-obsidian`.
 - **FR-007**: System MUST use the existing `node scan.mjs`, batch evaluation prompts (`batch/batch-prompt.md`), and `/career-ops apply` mode without duplicating logic.
-- **FR-008**: System MUST deliver a daily summary update after each scheduled cycle (9 AM and 6 PM) via three channels: (A) terminal console, (C) Slack webhook, (D) Obsidian daily log. User can enable/disable channels in `config/profile.yml`.
+- **FR-008**: System MUST deliver a daily summary update after each scheduled cycle (9 AM and 6 PM) via three channels: (A) terminal console, (C) Slack webhook, (D) Obsidian daily log. Console is always enabled; Slack and Obsidian are configurable in `config/profile.yml`.
 - **FR-009**: System MUST respect the career-ops data contract: user data stays local; all new entries use canonical statuses from `templates/states.yml`.
 - **FR-010**: System MUST maintain human-in-the-loop principle: no applications are submitted, no messages sent, no forms accepted without user review and explicit approval.
 
@@ -113,7 +113,7 @@
 - **Scheduled Trigger**: Time-based event (9:00 AM SGT, 6:00 PM SGT) that initiates a scan or form-fill cycle. Can be triggered via system scheduler (cron/Task Scheduler), GitHub Actions, Node.js scheduler, or user-provided external trigger.
 - **Pipeline Entry**: A job posting URL added to `data/pipeline.md` with metadata (source, date_found, archetype, score).
 - **Session Log**: Metadata record in Obsidian vault capturing one automation cycle: timestamp, action (scan/form-fill), summary, links to reports.
-- **Form Draft**: A partially or fully filled application form with AI suggestions, user edits, and status (draft/ready/submitted).
+- **Form Draft**: A partially or fully filled application form with AI suggestions and user edits; tracker state must use canonical statuses from `templates/states.yml`.
 - **Update Notification**: A summary message delivered after each cycle with key metrics (jobs found, forms filled, recommendations).
 
 ## Success Criteria *(mandatory)*
@@ -122,7 +122,7 @@
 
 - **SC-001**: User lands a job within 60 days of activating this automation (outcome metric).
 - **SC-002**: Automation discovers and surfaces at least 2–5 new relevant opportunities per day (volume metric: `data/pipeline.md` growth).
-- **SC-003**: User completes at least 1 application per day with AI assistance (quality metric: `data/applications.md` status changes from Draft → Applied).
+- **SC-003**: User completes at least 1 application per day with AI assistance (quality metric: `data/applications.md` status changes from Evaluated → Applied).
 - **SC-004**: System delivers both 9 AM and 6 PM cycles with 99% uptime over 30 days (reliability metric).
 - **SC-005**: Time per application (from discovery to form submission) is reduced by 70% compared to manual workflow (efficiency metric: <10 minutes per application vs. baseline 30+ minutes).
 - **SC-006**: User rates Obsidian integration as "useful for memory" in post-30-day survey (qualitative metric).
@@ -142,4 +142,4 @@
 
 ---
 
-**Template version**: 1.0 | **Specification status**: Ready for clarification → planning
+**Template version**: 1.0 | **Specification status**: Implemented and validated

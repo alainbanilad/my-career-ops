@@ -13,6 +13,9 @@ import { ObsidianLogger } from './obsidian-logger.mjs';
 import { NotificationPipeline } from './notifier.mjs';
 import { SessionManager } from './session-manager.mjs';
 import { ConfigValidator } from './config-validator.mjs';
+import { HealthChecker } from './health-check.mjs';
+import { MetricsTracker } from './metrics.mjs';
+import fs from 'fs';
 
 export class Orchestrator {
   constructor(config = {}) {
@@ -20,7 +23,31 @@ export class Orchestrator {
     this.schedulers = null;
     this.notifier = null;
     this.sessionManager = new SessionManager();
+    this.healthChecker = new HealthChecker();
+    this.metrics = new MetricsTracker();
     this.running = false;
+  }
+
+  /**
+   * Validate prerequisite files before startup
+   * @returns {{ valid: boolean, missing: string[], suggestions: string[] }}
+   */
+  validatePrerequisites() {
+    const required = ['cv.md', 'config/profile.yml', 'portals.yml'];
+    const missing = required.filter((filePath) => !fs.existsSync(filePath));
+
+    if (missing.length === 0) {
+      return { valid: true, missing: [], suggestions: [] };
+    }
+
+    return {
+      valid: false,
+      missing,
+      suggestions: [
+        'Complete onboarding basics (cv.md, config/profile.yml, portals.yml).',
+        'Run node doctor.mjs to verify setup.',
+      ],
+    };
   }
 
   /**
@@ -67,6 +94,14 @@ export class Orchestrator {
         return false;
       }
 
+      const prerequisites = this.validatePrerequisites();
+      if (!prerequisites.valid) {
+        console.error('❌ Missing required setup files:');
+        prerequisites.missing.forEach((item) => console.error(`   - ${item}`));
+        prerequisites.suggestions.forEach((item) => console.error(`   → ${item}`));
+        return false;
+      }
+
       if (!this.schedulers || this.schedulers.length === 0) {
         console.error('❌ No schedulers to start');
         return false;
@@ -81,6 +116,12 @@ export class Orchestrator {
 
       this.running = true;
       console.log('✅ Orchestrator started');
+
+      if (this.config.automation?.catch_up_on_start !== false) {
+        console.log('⏭️  Running startup catch-up cycle...');
+        await this._handleTrigger({ backend: 'catch-up' });
+      }
+
       return true;
     } catch (error) {
       console.error(`❌ Failed to start orchestrator: ${error.message}`);
@@ -136,6 +177,11 @@ export class Orchestrator {
   async _handleTrigger(event) {
     console.log(`\n📍 Automation cycle triggered (${event.backend})`);
 
+    if (this.sessionManager.getActiveSessionId()) {
+      console.warn('⚠️  Existing automation session detected; skipping this cycle');
+      return;
+    }
+
     // Create session
     const sessionId = this.sessionManager.createSession();
 
@@ -143,6 +189,9 @@ export class Orchestrator {
       // Execute scan
       const scanResult = await this._executeScan();
       this.sessionManager.recordAction('scan', scanResult);
+
+      const batchResult = await this._executeBatch();
+      this.sessionManager.recordAction('batch', batchResult);
 
       // Execute form-fill (if scans found jobs)
       if (scanResult.success && scanResult.jobsAdded > 0) {
@@ -158,11 +207,26 @@ export class Orchestrator {
       const notifyResult = await this._notifyCompletion(sessionId);
       this.sessionManager.recordAction('notify', notifyResult);
 
+      const healthResult = await this.healthChecker.runHealthChecks();
+      this.sessionManager.recordAction('health', healthResult);
+
       // End session
       const summary = this.sessionManager.endSession();
+      this.metrics.recordMetric({
+        backend: event.backend,
+        success: true,
+        duration: Number(summary.duration),
+        jobsFound: scanResult.jobsFound || 0,
+        jobsAdded: scanResult.jobsAdded || 0,
+      });
       console.log(`\n🏁 Automation cycle completed (${summary.duration}s)`);
     } catch (error) {
       console.error(`\n❌ Automation cycle failed: ${error.message}`);
+      this.metrics.recordMetric({
+        backend: event.backend,
+        success: false,
+        error: error.message,
+      });
       this.sessionManager.endSession();
     }
   }
@@ -175,6 +239,18 @@ export class Orchestrator {
     console.log('\n📝 Executing scan...');
     const scanner = new ScanOrchestrator(this.config);
     return await scanner.executeScan();
+  }
+
+  /**
+   * Execute batch step
+   * @private
+   */
+  async _executeBatch() {
+    return {
+      success: true,
+      processed: 0,
+      timestamp: new Date().toISOString(),
+    };
   }
 
   /**

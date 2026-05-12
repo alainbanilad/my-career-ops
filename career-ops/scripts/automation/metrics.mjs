@@ -50,7 +50,7 @@ export class MetricsTracker {
   getUptimeMetrics(days = 30) {
     try {
       if (!fs.existsSync(this.logPath)) {
-        return { totalRuns: 0, successfulRuns: 0, failedRuns: 0, uptime: '0%', avgDuration: 0 };
+        return { totalRuns: 0, successfulRuns: 0, failedRuns: 0, uptime: '0%', avgDuration: 0, days };
       }
 
       const metrics = JSON.parse(fs.readFileSync(this.logPath, 'utf-8'));

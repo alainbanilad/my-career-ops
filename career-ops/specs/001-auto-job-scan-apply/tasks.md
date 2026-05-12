@@ -154,13 +154,11 @@ Phase 8 (Polish & Tests)
 
 ### Scanning Orchestration
 
-- [ ] T013 [US1] Create `scripts/automation/scan-orchestrator.mjs` stub:
   - [x] T013 [US1] Create `scripts/automation/scan-orchestrator.mjs` stub:
   - Export `executeScan(config)` async function
   - Placeholder: will invoke `node scan.mjs` with proper environment
   - Return: { success, jobsFound, jobsAdded, errors }
 
-- [ ] T014 [US1] Implement scan orchestrator in `scripts/automation/scan-orchestrator.mjs`:
   - [x] T014 [US1] Implement scan orchestrator in `scripts/automation/scan-orchestrator.mjs`:
   - Call existing `scan.mjs` via child_process.spawn() or import scan logic
   - Verify: `scan.mjs` applies title filters from `portals.yml` (FR-003 archetype filtering is role-based title matching, not separate archetype config)
@@ -169,7 +167,6 @@ Phase 8 (Polish & Tests)
   - Return structured result for notifier pipeline
   - Note: If additional archetype filtering is needed beyond portals.yml title_filter, add post-scan filter step (defer to requirements clarification)
 
-- [ ] T015 [US1] Create `scripts/automation/tests/scan-orchestrator.test.mjs`:
   - [x] T015 [US1] Create `scripts/automation/tests/scan-orchestrator.test.mjs`:
   - Test: `executeScan()` returns { success, jobsFound, jobsAdded }
   - Test: Dedup works (calling scan twice doesn't double-add URLs)
@@ -190,17 +187,15 @@ Phase 8 (Polish & Tests)
 - Forms pre-filled with AI suggestions (CV, cover letter, screening answers)
 - User can review and edit all fields
 - Forms NOT auto-submitted (user clicks Submit)
-- Drafts saved to `data/applications.md`
+- Entries saved with canonical status to `data/applications.md` via TSV merge
 
 ### Form Filling Orchestration
 
-- [ ] T016 [US2] Create `scripts/automation/form-orchestrator.mjs` stub:
   - [x] T016 [US2] Create `scripts/automation/form-orchestrator.mjs` stub:
   - Export `executeFormFill(pipelineEntry, config)` async function
   - Input: job posting URL and metadata from `data/pipeline.md`
   - Placeholder: will invoke `/career-ops apply` mode
 
-- [ ] T017 [US2] Implement form orchestrator in `scripts/automation/form-orchestrator.mjs`:
   - [x] T017 [US2] Implement form orchestrator in `scripts/automation/form-orchestrator.mjs`:
   - Invoke existing `/career-ops apply` mode with job URL
   - Generate customized CV using `templates/cv-template.html` + `cv.md`
@@ -208,23 +203,22 @@ Phase 8 (Polish & Tests)
   - Return form state for user review (HTML or JSON representation)
   - **CRITICAL**: Write entry to `batch/tracker-additions/{num}-{company-slug}.tsv` per Constitution IV pipeline (TSV + merge-tracker.mjs)
   - Do NOT write directly to `data/applications.md`; merge-tracker.mjs will consolidate TSV entries
-  - Set status field to `Draft` (canonical status from templates/states.yml)
+  - Set status field to `Evaluated` (canonical status from templates/states.yml)
   - Ensure NO auto-submit logic (user must explicitly trigger Submit)
   - See CLAUDE.md ethical rules: NEVER submit without user review
 
-- [ ] T018 [US2] Create `scripts/automation/tests/form-orchestrator.test.mjs`:
   - [x] T018 [US2] Create `scripts/automation/tests/form-orchestrator.test.mjs`:
   - Test: `executeFormFill()` returns pre-filled form without submitting
   - Test: Form contains user's CV and customized cover letter
   - Test: Screening question fields are populated with suggestions
-  - Test: Draft saved to applications.md with correct status
+  - Test: Entry saved to applications.md with canonical status
   - Mock: `generate-pdf.mjs`, `/career-ops apply` mode
 
 **Acceptance**:
 - Forms pre-filled with AI suggestions
 - User can review before submission
 - No auto-submission (manual user trigger required)
-- Drafts tracked in applications.md
+- Entries tracked in applications.md with canonical status
 
 ---
 
@@ -237,7 +231,6 @@ Phase 8 (Polish & Tests)
 
 ### Obsidian Session Logging
 
-- [ ] T019 [US3] Create `scripts/automation/obsidian-logger.mjs` implementing:
   - [x] T019 [US3] Create `scripts/automation/obsidian-logger.mjs` implementing:
   - Export `SessionLogger` class with `logSession(sessionData)` method
   - Input: `{ type: "scan"|"form-fill", status, duration, jobsFound, jobsAdded, scores, timestamp }`
@@ -247,15 +240,14 @@ Phase 8 (Polish & Tests)
   - Use backlinks syntax: `[[reports/001-company-date]]`
   - Handle missing vault gracefully (warn, don't crash)
 
-- [ ] T020 [US3] Implement Obsidian path validation and file I/O in `obsidian-logger.mjs`:
   - [x] T020 [US3] Implement Obsidian path validation and file I/O in `obsidian-logger.mjs`:
   - Validate vault exists at `config.automation.notifications.obsidian.vault_path`
   - Create folder structure if missing (`Career-Ops/Sessions/`)
   - Generate daily session file: `{YYYY-MM-DD}.md` (multiple sessions per day append to same file)
   - Optional: append to daily digest file (configurable via `daily_digest` flag)
+  - If vault is unavailable: queue session payload locally and retry flush on next successful cycle
   - Handle file write errors (disk full, permission denied) gracefully
 
-- [ ] T021 [US3] Create `scripts/automation/tests/obsidian-logger.test.mjs`:
   - [x] T021 [US3] Create `scripts/automation/tests/obsidian-logger.test.mjs`:
   - Test: Session logged with correct frontmatter and metadata
   - Test: Multiple sessions on same day append to same file
@@ -280,7 +272,6 @@ Phase 8 (Polish & Tests)
 
 ### Notification Pipeline
 
-- [ ] T022 [US4] Create `scripts/automation/notifier.mjs` implementing:
   - [x] T022 [US4] Create `scripts/automation/notifier.mjs` implementing:
   - Export `NotificationPipeline` class
   - Constructor: load notifier backends based on `config.automation.notifications`
@@ -288,14 +279,12 @@ Phase 8 (Polish & Tests)
   - Implement graceful degradation: one notifier failure doesn't crash others
   - Conform to contracts/notification-interface.md
 
-- [ ] T023 [P] [US4] Create console notifier in `scripts/automation/notifiers/console-notifier.mjs`:
   - [x] T023 [P] [US4] Create console notifier in `scripts/automation/notifiers/console-notifier.mjs`:
   - Always enabled (cannot disable)
   - Output to stdout with colored text (per log_level: debug|info|warn|error)
   - Format: timestamp, type emoji, title, message, metadata table
   - Implement ANSI color codes for terminal output
 
-- [ ] T024 [P] [US4] Create Slack notifier in `scripts/automation/notifiers/slack-notifier.mjs`:
   - [x] T024 [P] [US4] Create Slack notifier in `scripts/automation/notifiers/slack-notifier.mjs`:
   - Validate webhook URL from config
   - Format message using Slack Block Kit (rich formatting)
@@ -304,14 +293,12 @@ Phase 8 (Polish & Tests)
   - Handle webhook failures gracefully (log warning, continue)
   - See research.md R3 for Slack patterns
 
-- [ ] T025 [P] [US4] Create Obsidian notifier in `scripts/automation/notifiers/obsidian-notifier.mjs`:
   - [x] T025 [P] [US4] Create Obsidian notifier in `scripts/automation/notifiers/obsidian-notifier.mjs`:
   - Append summary to daily digest file in Obsidian vault
   - Format: markdown with key metrics (jobs found, forms filled, recommendations)
   - Link back to session log in `Career-Ops/Sessions/`
   - Handle missing vault gracefully (log warning, continue)
 
-- [ ] T026 [US4] Create `scripts/automation/tests/notifier.test.mjs`:
   - [x] T026 [US4] Create `scripts/automation/tests/notifier.test.mjs`:
   - Test: All enabled notifiers receive message
   - Test: Slack Block Kit formatting is valid JSON
@@ -337,7 +324,6 @@ Phase 8 (Polish & Tests)
 
 ### Main Orchestration Layer
 
-- [ ] T027 [US5] Create `scripts/automation/orchestrator.mjs` implementing:
   - [x] T027 [US5] Create `scripts/automation/orchestrator.mjs` implementing:
   - Export `Orchestrator` class (main entry point)
   - Constructor: load scheduler, notifiers, orchestrators (scan, form, log)
@@ -347,7 +333,6 @@ Phase 8 (Polish & Tests)
   - Handle concurrent run prevention (skip cycle if one is running)
   - See plan.md for full orchestration flow: scan → batch → form-fill → notify
 
-- [ ] T028 [US5] Implement full orchestration cycle in `orchestrator.mjs`:
   - [x] T028 [US5] Implement full orchestration cycle in `orchestrator.mjs`:
   - Execution flow: `executeScan() → executeBatch() → executeFormFill() → executeNotify()`
   - Each step captures results and passes to next step
@@ -355,14 +340,12 @@ Phase 8 (Polish & Tests)
   - Notifications sent with summary
   - Error handling: log errors, continue with next steps, notify user of failures
 
-- [ ] T029 [US5] Create action handlers in `scripts/automation/action-handlers/`:
   - [x] T029 [US5] Create action handlers in `scripts/automation/action-handlers/`:
   - `scripts/automation/action-handlers/scan-action.mjs` — wraps scan-orchestrator
   - `scripts/automation/action-handlers/batch-action.mjs` — wraps batch processor
   - `scripts/automation/action-handlers/form-fill-action.mjs` — wraps form orchestrator
   - Each handler: capture output, log metrics, return structured result
 
-- [ ] T030 [US5] Create session manager in `scripts/automation/session-manager.mjs`:
   - [x] T030 [US5] Create session manager in `scripts/automation/session-manager.mjs`:
   - Generate unique session IDs (UUID v4)
   - Store active session info in `config.automation.automation_state`
@@ -370,7 +353,6 @@ Phase 8 (Polish & Tests)
   - Prevent concurrent sessions (return error if one is running)
   - Update state after each action completes
 
-- [ ] T031 [P] [US5] Create configuration validation utility in `scripts/automation/config-validator.mjs`:
   - [x] T031 [P] [US5] Create configuration validation utility in `scripts/automation/config-validator.mjs`:
   - Validate `automation` section in `config/profile.yml`
   - Check: at least one backend enabled
@@ -379,7 +361,6 @@ Phase 8 (Polish & Tests)
   - Check: schedule times are valid HH:MM format
   - Return: `{ valid: boolean, errors: [string] }`
 
-- [ ] T032 [US5] Create CLI entry point `scripts/automation/cli.mjs`:
   - [x] T032 [US5] Create CLI entry point `scripts/automation/cli.mjs`:
   - Commands: `start`, `stop`, `status`, `validate-config`, `run-once {action}`
   - Usage: `node scripts/automation/cli.mjs start` — start all backends
@@ -387,7 +368,6 @@ Phase 8 (Polish & Tests)
   - Usage: `node scripts/automation/cli.mjs status` — show backend statuses
   - Add to `package.json` scripts: `"automation:start"`, `"automation:stop"`, `"automation:status"`
 
-- [ ] T033 [US5] Create `scripts/automation/tests/orchestrator.test.mjs`:
   - [x] T033 [US5] Create `scripts/automation/tests/orchestrator.test.mjs`:
   - Test: Full cycle: scan → batch → notify
   - Test: Session tracking works (session IDs, timestamps)
@@ -407,7 +387,6 @@ Phase 8 (Polish & Tests)
 
 ### Integration Tests
 
-- [ ] T034 Create `scripts/automation/tests/e2e.test.mjs` end-to-end test:
   - [x] T034 Create `scripts/automation/tests/e2e.test.mjs` end-to-end test:
   - Setup: Create temporary test vault, config, pipeline
   - Flow: Start orchestrator → trigger scan → verify pipeline updated → trigger batch → verify reports created → check Obsidian logs → stop orchestrator
@@ -415,7 +394,6 @@ Phase 8 (Polish & Tests)
   - Cleanup: Remove test files
   - Run: `npm test -- --testPathPattern=e2e`
 
-- [ ] T035 Create `scripts/automation/tests/integration.test.mjs`:
   - [x] T035 Create `scripts/automation/tests/integration.test.mjs`:
   - Test: Scheduler backends can be started/stopped without errors
   - Test: Config validation catches invalid configs
@@ -425,7 +403,6 @@ Phase 8 (Polish & Tests)
 
 ### Documentation
 
-- [ ] T036 Create `scripts/automation/README.md` with:
   - [x] T036 Create `scripts/automation/README.md` with:
   - Quick start guide
   - Configuration reference (all config.automation.* options)
@@ -433,7 +410,6 @@ Phase 8 (Polish & Tests)
   - CLI command reference
   - Troubleshooting guide (common issues, logs)
 
-- [ ] T037 Update main `README.md` with:
   - [x] T037 Update main `README.md` with:
   - Link to `scripts/automation/README.md`
   - Highlight Feature #001 status: Implementation phase
@@ -441,7 +417,6 @@ Phase 8 (Polish & Tests)
 
 ### Optional: GitHub Actions Workflow
 
-- [ ] T038 [P] Finalize `.github/workflows/auto-job-scan-apply.yml`:
   - [x] T038 [P] Finalize `.github/workflows/auto-job-scan-apply.yml`:
   - Triggers: `schedule: - cron: '0 9,18 * * *'` (9 AM and 6 PM SGT → adjust for GitHub UTC)
   - Steps: 
@@ -455,7 +430,6 @@ Phase 8 (Polish & Tests)
 
 ### Error Handling & Logging
 
-- [ ] T039 Create centralized logger in `scripts/automation/logger.mjs`:
   - [x] T039 Create centralized logger in `scripts/automation/logger.mjs`:
   - Wrapper around console with timestamp, level, context
   - Write logs to `logs/automation/` directory (gitignored)
@@ -463,7 +437,6 @@ Phase 8 (Polish & Tests)
   - Levels: debug, info, warn, error
   - Used by all modules
 
-- [ ] T040 [P] Add error recovery in key modules:
   - [x] T040 [P] Add error recovery in key modules:
   - Scheduler backends: exponential backoff on failure, auto-restart (if enabled)
   - Notifiers: retry logic for transient failures (HTTP 429, timeout)
@@ -472,7 +445,6 @@ Phase 8 (Polish & Tests)
 
 ### Dependencies & Verification
 
-- [ ] T041 Verify all dependencies installed and working:
   - [x] T041 Verify all dependencies installed and working:
   - `npm install` completes without errors
   - `node-schedule` imported successfully in tests
@@ -480,7 +452,6 @@ Phase 8 (Polish & Tests)
   - All test files run without import errors
   - Run: `npm run test` to confirm
 
-- [ ] T042 Create verification checklist in `scripts/automation/VERIFICATION.md`:
   - [x] T042 Create verification checklist in `scripts/automation/VERIFICATION.md`:
   - 10-point checklist for post-implementation validation
   - Each item links to test case or manual step
@@ -488,7 +459,6 @@ Phase 8 (Polish & Tests)
 
 ### Gap-Closure Tasks (Identified in Analysis)
 
-- [ ] T043 [P] Create metrics/uptime dashboard in `scripts/automation/metrics.mjs`:
   - [x] T043 [P] Create metrics/uptime dashboard in `scripts/automation/metrics.mjs`:
   - Purpose: Track SC-004 (99% uptime over 30 days)
   - Implement: CLI command `node scripts/automation/cli.mjs metrics` to report:
@@ -499,16 +469,15 @@ Phase 8 (Polish & Tests)
   - Output: JSON (programmatic) and formatted table (human-readable console)
   - Use case: User can verify automation is reliable before deploying
 
-- [ ] T044 [P] Add prerequisite validation to orchestrator startup in `scripts/automation/orchestrator.mjs`:
   - [x] T044 [P] Add prerequisite validation to orchestrator startup in `scripts/automation/orchestrator.mjs`:
   - Purpose: Implement CLAUDE.md onboarding pattern (never proceed without cv.md, config, portals)
   - Implement: Before `Orchestrator.start()`, call `validatePrerequisites()`
   - Check: `cv.md` exists and is readable, `config/profile.yml` exists with automation section, `portals.yml` exists
   - Return: `{ valid: boolean, missing: [string], suggestions: [string] }`
   - Behavior: If invalid, log helpful error and refuse to start; suggest onboarding steps
+  - If startup schedules were missed while offline, run one catch-up cycle on boot (configurable)
   - Test: Unit test for each missing file scenario
 
-- [ ] T045 [P] Add health check execution after automation generates entries in `scripts/automation/health-check.mjs`:
   - [x] T045 [P] Add health check execution after automation generates entries in `scripts/automation/health-check.mjs`:
   - Purpose: Implement Constitution IV requirement (verify-pipeline.mjs + doctor.mjs after writes)
   - Implement: After T028 completes successfully, call `runHealthChecks()`

@@ -114,7 +114,7 @@ output/                  # Generated PDFs (existing)
 D:\AI_BRAIN\Claude-Obsidian\claude-obsidian/  # User's Obsidian vault
 └── Career-Ops/
     └── Sessions/
-        └── 2026-05-12-0900-scan.md          # Session logs (NEW)
+    └── 2026-05-12.md                    # Daily session log (NEW)
 ```
 
 ---

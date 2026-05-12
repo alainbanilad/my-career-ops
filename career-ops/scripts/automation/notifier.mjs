@@ -44,18 +44,19 @@ export class NotificationPipeline {
    * @returns {Promise<Object>} Results { channel: status }
    */
   async notify(event) {
+    const normalizedEvent = this._normalizeEvent(event);
     const results = {};
 
     for (const channel of this.enabledChannels) {
       try {
         if (channel === 'console') {
-          this._notifyConsole(event);
+          this._notifyConsole(normalizedEvent);
           results.console = 'sent';
         } else if (channel === 'slack') {
-          await this._notifySlack(event);
+          await this._notifySlack(normalizedEvent);
           results.slack = 'sent';
         } else if (channel === 'obsidian') {
-          await this._notifyObsidian(event);
+          await this._notifyObsidian(normalizedEvent);
           results.obsidian = 'sent';
         }
       } catch (error) {
@@ -65,6 +66,28 @@ export class NotificationPipeline {
     }
 
     return results;
+  }
+
+  /**
+   * Normalize message payload to event contract
+   * @private
+   */
+  _normalizeEvent(event) {
+    if (event && event.data) {
+      return {
+        ...event,
+        timestamp: event.timestamp || new Date().toISOString(),
+      };
+    }
+
+    return {
+      type: event?.type || 'notification',
+      timestamp: event?.timestamp || new Date().toISOString(),
+      data: {
+        message: event?.message || event?.title || 'Automation update',
+        details: event?.metadata || {},
+      },
+    };
   }
 
   /**

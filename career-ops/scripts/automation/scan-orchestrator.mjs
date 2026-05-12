@@ -79,20 +79,20 @@ export class ScanOrchestrator {
       let stdout = '';
       let stderr = '';
 
-      const process = spawn('node', [this.scanExecutable, ...args], {
-        cwd: process.cwd(),
+      const child = spawn('node', [this.scanExecutable, ...args], {
+        cwd: globalThis.process.cwd(),
         stdio: ['pipe', 'pipe', 'pipe'],
       });
 
-      process.stdout.on('data', (data) => {
+      child.stdout.on('data', (data) => {
         stdout += data.toString();
       });
 
-      process.stderr.on('data', (data) => {
+      child.stderr.on('data', (data) => {
         stderr += data.toString();
       });
 
-      process.on('close', (exitCode) => {
+      child.on('close', (exitCode) => {
         const result = {
           exitCode,
           stdout,
@@ -105,7 +105,7 @@ export class ScanOrchestrator {
         resolve(result);
       });
 
-      process.on('error', (error) => {
+      child.on('error', (error) => {
         resolve({
           exitCode: 1,
           errors: [error.message],

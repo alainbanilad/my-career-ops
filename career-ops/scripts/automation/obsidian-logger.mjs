@@ -13,6 +13,7 @@ export class ObsidianLogger {
     this.config = config;
     this.vaultPath = config.vault_path;
     this.sessionFolder = config.session_folder || 'Career-Ops/Sessions';
+    this.queuePath = 'logs/automation/obsidian-queue.json';
   }
 
   /**
@@ -30,8 +31,12 @@ export class ObsidianLogger {
       // Validate vault exists
       if (!fs.existsSync(this.vaultPath)) {
         console.warn(`⚠️  Obsidian vault not found at ${this.vaultPath}`);
-        return { success: false, reason: 'vault not found' };
+        this._enqueueSession(sessionData);
+        return { success: false, reason: 'vault not found (queued for retry)' };
       }
+
+      // Flush queued sessions when vault becomes available
+      this._flushQueuedSessions();
 
       // Create session folder if missing
       const fullSessionPath = path.join(this.vaultPath, this.sessionFolder);
@@ -59,8 +64,89 @@ export class ObsidianLogger {
       return { success: true, filePath: sessionFile };
     } catch (error) {
       console.error(`❌ Obsidian logging failed: ${error.message}`);
-      return { success: false, reason: error.message };
+      this._enqueueSession(sessionData);
+      return { success: false, reason: `${error.message} (queued for retry)` };
     }
+  }
+
+  /**
+   * Queue session payload when vault is unavailable
+   * @private
+   */
+  _enqueueSession(sessionData) {
+    try {
+      const queueDir = path.dirname(this.queuePath);
+      if (!fs.existsSync(queueDir)) {
+        fs.mkdirSync(queueDir, { recursive: true });
+      }
+
+      const queue = fs.existsSync(this.queuePath)
+        ? JSON.parse(fs.readFileSync(this.queuePath, 'utf-8'))
+        : [];
+      queue.push({ queuedAt: new Date().toISOString(), sessionData });
+      fs.writeFileSync(this.queuePath, JSON.stringify(queue, null, 2));
+    } catch (error) {
+      console.error(`❌ Failed to queue Obsidian session: ${error.message}`);
+    }
+  }
+
+  /**
+   * Flush queued sessions to Obsidian vault
+   * @private
+   */
+  _flushQueuedSessions() {
+    if (!fs.existsSync(this.queuePath)) {
+      return;
+    }
+
+    try {
+      const queue = JSON.parse(fs.readFileSync(this.queuePath, 'utf-8'));
+      if (!Array.isArray(queue) || queue.length === 0) {
+        return;
+      }
+
+      const remaining = [];
+      for (const item of queue) {
+        try {
+          this._writeSession(item.sessionData);
+        } catch {
+          remaining.push(item);
+        }
+      }
+
+      if (remaining.length === 0) {
+        fs.unlinkSync(this.queuePath);
+      } else {
+        fs.writeFileSync(this.queuePath, JSON.stringify(remaining, null, 2));
+      }
+    } catch (error) {
+      console.error(`❌ Failed to flush queued Obsidian sessions: ${error.message}`);
+    }
+  }
+
+  /**
+   * Write a single session payload to daily file
+   * @private
+   */
+  _writeSession(sessionData) {
+    const fullSessionPath = path.join(this.vaultPath, this.sessionFolder);
+    if (!fs.existsSync(fullSessionPath)) {
+      fs.mkdirSync(fullSessionPath, { recursive: true });
+    }
+
+    const date = new Date(sessionData.timestamp || Date.now());
+    const dateStr = date.toISOString().slice(0, 10);
+    const sessionFile = path.join(fullSessionPath, `${dateStr}.md`);
+    const entry = this._formatSessionEntry(sessionData);
+
+    if (fs.existsSync(sessionFile)) {
+      fs.appendFileSync(sessionFile, '\n' + entry);
+    } else {
+      const header = this._formatFileHeader(date);
+      fs.writeFileSync(sessionFile, header + entry);
+    }
+
+    return sessionFile;
   }
 
   /**
@@ -87,11 +173,14 @@ status: active
    */
   _formatSessionEntry(sessionData) {
     const time = new Date(sessionData.timestamp || Date.now()).toLocaleTimeString();
-    const icon = sessionData.type === 'scan' ? '🔍' : '📝';
+    const type = sessionData.type || 'automation';
+    const icon = type === 'scan' ? '🔍' : '📝';
+    const duration = Number(sessionData.duration || 0);
+    const status = sessionData.status || (sessionData.success === false ? 'Error' : 'Completed');
 
-    let entry = `## ${icon} ${time} — ${sessionData.type.toUpperCase()}\n`;
-    entry += `**Status**: ${sessionData.status}\n`;
-    entry += `**Duration**: ${sessionData.duration?.toFixed(2)}s\n`;
+    let entry = `## ${icon} ${time} — ${type.toUpperCase()}\n`;
+    entry += `**Status**: ${status}\n`;
+    entry += `**Duration**: ${duration.toFixed(2)}s\n`;
 
     if (sessionData.jobsFound || sessionData.jobsAdded) {
       entry += `\n| Metric | Value |\n| --- | --- |\n`;

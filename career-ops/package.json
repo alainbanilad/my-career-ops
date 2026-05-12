@@ -15,7 +15,13 @@
     "rollback": "node update-system.mjs rollback",
     "liveness": "node check-liveness.mjs",
     "scan": "node scan.mjs",
-    "export": "node export-dashboard.mjs"
+    "export": "node export-dashboard.mjs",
+    "automation:start": "node scripts/automation/cli.mjs start",
+    "automation:stop": "node scripts/automation/cli.mjs stop",
+    "automation:status": "node scripts/automation/cli.mjs status",
+    "automation:validate": "node scripts/automation/cli.mjs validate-config",
+    "automation:metrics": "node scripts/automation/cli.mjs metrics",
+    "automation:verify": "node scripts/automation/cli.mjs validate-config && npm run verify && npm run doctor"
   },
   "keywords": [
     "ai",
